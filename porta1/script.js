@@ -9,7 +9,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         const targetElement = document.querySelector(targetId);
         if(targetElement) {
             window.scrollTo({
-                top: targetElement.offsetTop - 60,
+                top: targetElement.offsetTop - 70,
                 behavior: 'smooth'
             });
             
@@ -20,6 +20,15 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// Refresh page when logo is clicked
+const homeLogo = document.getElementById('homeLogo');
+if(homeLogo) {
+    homeLogo.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = window.location.origin + window.location.pathname;
+    });
+}
 
 // Cambiar clase activa en navegación al hacer scroll
 window.addEventListener('scroll', function() {
@@ -39,7 +48,7 @@ window.addEventListener('scroll', function() {
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
         const sectionHeight = section.clientHeight;
-        if(pageYOffset >= (sectionTop - 150)) {
+        if(pageYOffset >= (sectionTop - 100)) {
             current = section.getAttribute('id');
         }
     });
@@ -56,69 +65,52 @@ window.addEventListener('scroll', function() {
 const menuToggle = document.getElementById('menuToggle');
 const navLinks = document.getElementById('navLinks');
 
-menuToggle.addEventListener('click', function() {
-    navLinks.classList.toggle('active');
-    menuToggle.innerHTML = navLinks.classList.contains('active') ? 
-        '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-});
-
-// Animación de barras de habilidades
-function animateSkills() {
-    const skillBars = document.querySelectorAll('.skill-progress');
-    skillBars.forEach(bar => {
-        const width = bar.getAttribute('data-width');
-        bar.style.width = width + '%';
+if(menuToggle && navLinks) {
+    menuToggle.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+        menuToggle.innerHTML = navLinks.classList.contains('active') ? 
+            '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        
+        // Prevenir scroll del body cuando el menú está abierto
+        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
     });
 }
 
-// Observador para animar habilidades cuando son visibles
-const aboutSection = document.getElementById('sobre-mi');
-const mySkillsSection = document.getElementById('mis-skills');
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting) {
-            animateSkills();
-            observer.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.5 });
-
-if(aboutSection) observer.observe(aboutSection);
-if(mySkillsSection) observer.observe(mySkillsSection);
-
 // Validación del formulario de contacto
 const contactForm = document.getElementById('contactForm');
-contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Validación simple
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const subject = document.getElementById('subject').value;
-    const message = document.getElementById('message').value;
-    
-    if(name && email && subject && message) {
-        // Simular envío exitoso
-        const submitBtn = this.querySelector('.btn');
-        const originalText = submitBtn.innerHTML;
+if(contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
         
-        submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
-        submitBtn.style.backgroundColor = '#27ae60';
-        submitBtn.disabled = true;
+        // Validación simple
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
         
-        setTimeout(() => {
-            submitBtn.innerHTML = originalText;
-            submitBtn.style.backgroundColor = '';
-            submitBtn.disabled = false;
-            contactForm.reset();
+        if(name && email && subject && message) {
+            // Simular envío exitoso
+            const submitBtn = this.querySelector('.btn');
+            const originalText = submitBtn.innerHTML;
             
-            // Mostrar mensaje de éxito
-            showNotification('Message sent successfully! I will contact you soon.', 'success');
-        }, 3000);
-    } else {
-        showNotification('Please fill in all fields.', 'error');
-    }
-});
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+            submitBtn.style.backgroundColor = '#27ae60';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.style.backgroundColor = '';
+                submitBtn.disabled = false;
+                contactForm.reset();
+                
+                // Mostrar mensaje de éxito
+                showNotification('Message sent successfully! I will contact you soon.', 'success');
+            }, 3000);
+        } else {
+            showNotification('Please fill in all fields.', 'error');
+        }
+    });
+}
 
 // Función para mostrar notificaciones
 function showNotification(message, type = 'info') {
@@ -152,7 +144,7 @@ function showNotification(message, type = 'info') {
 
 // Animación de elementos al hacer scroll
 function initScrollAnimations() {
-    const animatedElements = document.querySelectorAll('.project-card, .about-content, .contact-content, .skill-category, .timeline-content, .certification-card, .skill-box');
+    const animatedElements = document.querySelectorAll('.project-card, .about-content, .contact-content, .skill-category, .timeline-content, .certification-card, .skill-list-item');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -173,7 +165,6 @@ function initScrollAnimations() {
 
 // Smooth loading animation
 function initPageLoader() {
-    // Simular carga de página
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.3s ease';
     
@@ -214,15 +205,15 @@ function initProjectInteractions() {
 
 // Skill boxes interaction
 function initSkillBoxesInteractions() {
-    const skillBoxes = document.querySelectorAll('.skill-box');
+    const skillBoxes = document.querySelectorAll('.skill-list-item');
     
     skillBoxes.forEach(box => {
         box.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
+            this.style.transform = 'translateX(5px)';
         });
         
         box.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
+            this.style.transform = 'translateX(0)';
         });
     });
 }
@@ -236,6 +227,7 @@ function initMobileMenu() {
             if (window.innerWidth <= 768) {
                 navLinks.classList.remove('active');
                 menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                document.body.style.overflow = ''; // Restaurar scroll
             }
         });
     });
@@ -248,6 +240,7 @@ function initKeyboardNavigation() {
         if (e.key === 'Escape' && navLinks.classList.contains('active')) {
             navLinks.classList.remove('active');
             menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.style.overflow = ''; // Restaurar scroll
         }
     });
 }
@@ -286,6 +279,7 @@ window.addEventListener('resize', function() {
     if (window.innerWidth > 768 && navLinks.classList.contains('active')) {
         navLinks.classList.remove('active');
         menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        document.body.style.overflow = ''; // Restaurar scroll
     }
 });
 
